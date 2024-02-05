@@ -1,0 +1,205 @@
+	section	.text,"ax",@progbits
+	assume	adl = 1
+	section	.text,"ax",@progbits
+	public	_main
+_main:
+	ld	hl, -21
+	call	__frameset
+	call	_random
+	ld	bc, 252
+	call	__iremu
+	ld	(ix - 6), hl
+	call	_random
+	ld	bc, 183
+	call	__iremu
+	ld	(ix - 12), hl
+	call	_gfx_Begin
+	ld	hl, 1
+	push	hl
+	call	_gfx_SetDraw
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	ld	hl, 178
+	push	hl
+	ld	hl, _global_palette
+	push	hl
+	call	_gfx_SetPalette
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 2
+	push	hl
+	call	_gfx_FillScreen
+	pop	hl
+	or	a, a
+	sbc	hl, hl
+	push	hl
+	call	_gfx_SetTransparentColor
+	pop	hl
+	ld	hl, _malloc
+	push	hl
+	ld	hl, 58
+	push	hl
+	ld	hl, 69
+	push	hl
+	call	_gfx_AllocSprite
+	pop	de
+	pop	de
+	pop	de
+	ld	de, (ix - 12)
+	push	de
+	ld	de, (ix - 6)
+	push	de
+	ld	(ix - 21), hl
+	push	hl
+	call	_gfx_GetSprite
+	ld	de, (ix - 12)
+	pop	hl
+	pop	hl
+	pop	hl
+	ld.sis	hl, 1
+	ld	(ix - 18), hl
+	ld	(ix - 15), hl
+BB0_1:
+	ld	hl, (ix - 6)
+	ld	bc, 65535
+	call	__iand
+	push	hl
+	pop	iy
+	ld	(ix - 12), de
+	ex	de, hl
+	call	__iand
+	ld	(ix - 3), hl
+	push	hl
+	ld	(ix - 9), iy
+	push	iy
+	ld	hl, (ix - 21)
+	push	hl
+	call	_gfx_Sprite
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, (ix - 6)
+	add.sis	hl, bc
+	or	a, a
+	sbc.sis	hl, bc
+	jp	z, BB0_3
+	ld	hl, (ix - 6)
+	ld.sis	de, 251
+	or	a, a
+	sbc.sis	hl, de
+	jr	nz, BB0_4
+BB0_3:
+	ld	hl, (ix - 15)
+	call	__sneg
+	ld	(ix - 15), hl
+BB0_4:
+	ld	iy, (ix - 18)
+	ld	hl, (ix - 12)
+	add.sis	hl, bc
+	or	a, a
+	sbc.sis	hl, bc
+	ld	bc, 65535
+	jp	z, BB0_6
+	ld.sis	de, 182
+	or	a, a
+	sbc.sis	hl, de
+	jr	nz, BB0_7
+BB0_6:
+	ex	de, hl
+	ld	e, iyl
+	ld	d, iyh
+	ex	de, hl
+	call	__sneg
+	ex	de, hl
+	ld	iyl, e
+	ld	iyh, d
+	ex	de, hl
+BB0_7:
+	or	a, a
+	sbc	hl, hl
+	ex	de, hl
+	ld	hl, (ix - 15)
+	ld	e, l
+	ld	d, h
+	ld	hl, (ix - 9)
+	add	hl, de
+	ld	(ix - 9), hl
+	ld	de, 0
+	ld	(ix - 18), iy
+	ld	e, iyl
+	ld	d, iyh
+	ld	iy, (ix - 3)
+	add	iy, de
+	ld	(ix - 3), iy
+	call	__iand
+	ld	de, (ix - 3)
+	push	de
+	push	hl
+	ld	hl, _troll_data
+	push	hl
+	call	_gfx_TransparentSprite_NoClip
+	pop	hl
+	pop	hl
+	pop	hl
+	ld	hl, 1
+	push	hl
+	call	_gfx_Blit
+	pop	hl
+	ld	hl, -720868
+	push	de
+	ld	e, (hl)
+	inc	hl
+	ld	d, (hl)
+	ld	l, e
+	ld	h, d
+	pop	de
+	ld	a, l
+	cp	a, 64
+	ld	de, (ix - 3)
+	ld	hl, (ix - 9)
+	ld	(ix - 6), hl
+	jp	nz, BB0_1
+	call	_gfx_End
+	or	a, a
+	sbc	hl, hl
+	ld	sp, ix
+	pop	ix
+	ret
+	section	.text,"ax",@progbits
+
+	section	.data,"aw",@progbits
+	public	_global_palette
+_global_palette:
+	db	"|ÿÿ", 0, 0, 0, "€„!!„""ˆBBˆCŒccŒd„„…”¥¥”¦˜ÆÆ˜Çœççœè !¡	¥)%)¥J)J©K­k-k­l±Œ1Œ±µ­5­µÎ9Î¹ï=ï½BÂ1F1ÆRJRÊrJsNsÎ“N”R”Ò´RµVµÖÖZÖÚöZ÷^÷Þ_cã8c9g9çYgZkZëzk{o{ï›oœsœó¼s½w½÷ÝwÞ{Þûþ{ÿ"
+
+	section	.data,"aw",@progbits
+	public	_troll_data
+_troll_data:
+	db	"E:", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'''$$$$$$$$$$$$$$$$$$$$'''''''''", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "''", 10, "", 10, 10, 10, 13, 13, "$''''", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'!", 10, "	""2;=@@AACDA=61/.-,,,.000.,)%", 26, "", 10, "!'''", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'AVPA86;AIJJIFA>=<;;9;;;;;5,''", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'MWG20>OVVTPMLLLOSVXVTQOLJJJLOLLJF=.", 10, "'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "$OXI11GRJ>868;=@@=;88;@DGJLLJIFC@=;;99I;", 26, "", 13, "$'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'", 13, "JR;3GO@5;DLOQQQQRUXXSOJFDCCAAACDILPRRDFS5'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'9WG6FR=2@G@988;;;;59SXURNJHIPXL$'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'", 10, """VS<=TI2@C55AMTWXP2PWA568;=>=58OU+", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'", 10, "CT=GW>5J85LX@8XOMUXVD/DP'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'&VVTX>5M2>WS8VU8SP0M(", 13, "'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'	DQ?P3DVPLJJJPWXIVK;DC/", 10, "'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "!&VXXSMVA,", 10, """<TXJGVS;!", 0, 0, 0, 0, 0, 0, 0, 0, 0, "$", 10, "GJ#CXPPTH?;89ARN'", 0, 0, 0, 0, 0, 0, "'$", 13, ".SUWXVI", 10, "CXI,1VU9C9'", 0, 0, 0, 0, 0, "$", 10, "%09GSX<.AU$&8OXD1XJ&", 10, "", 26, "N<>DFHLU3", 13, "'", 0, 0, 0, "$", 10, "*08>FJPXC5GS+!%$/J1""XL,""", 13, "5SC?AAC<3O8	'", 0, "'", 13, ",;VL1% ""*6OXDPUFDMTXF)FRD.", 10, "", 10, ";M", 10, ",6@GMRVVNC.F2'02U=-GVU<HP5>XT1CUXTSUT80D0@", 13, "08IC", 13, "8MSPL/", 10, "1@A3>RPM", 13, "(XG)(C=8O5$", 10, "O;UT", 10, ">R%CP9""&JP!XK0CO2", 13, "$", 26, "F8V;""2V=X@+X@JWOD=<@LVU", 26, "AE5VXUC0M9SC$@V<X/", 10, "FS$1PQVTHDO;", 10, 13, "1SXA)", 26, ",T6?<P>""@W;V*PO8'2OWUTSO5@		%TX@JVUXU", 26, "'R2R66X;V.D&	SM0-GVS82368A-'9JXLCOIU2>P,", 13, "%X;R=3NF>DM/!8MVSTVVX*OT2))/EXF=RXA)TJR5%", 13, "J>DRW6!RF%9MV.2H", 13, "&SP!*C>09TV'RS>0<", 10, "'!*L0O<,V=CV+", 10, "5,!5IVJP;JRRTV@MJ!.UXUDNS.IA@S<''9F.=RS$", 10, "&DX0ASD0", 10, "/9AWO", 13, "/VV@", 13, "CU", 10, "'", 0, 0, "'", 13, "8O@CWL%PVJ5#1@LSWX@($9WVJ6(=G	'", 0, 0, 0, "$", 10, "$GW<", 26, "5""LX=", 26, "&", 13, ").58;=<92*", 13, """(5$98$", 0, 0, 0, 0, "'$", 10, 13, ">W*3T8#8MX2>TL@0", 10, "/XF2861", 10, "'", 0, 0, 0, 0, 0, "'$RO", 13, "C0*@MV'8IC;)5AJP22D(05/", 10, "'", 0, 0, 0, 0, 0, 0, "'/CO>0<9PW1GJ*J(W06.", 13, "'", 0, 0, 0, 0, 0, 0, 0, "'I5!*@UC)!.8@C'.CCC9=><3%", 10, "8.", 13, "'", 0, 0, 0, 0, 0, 0, 0, 0, "$+V-RXN9<.", 13, "'", 0, 0, 0, 0, 0, 0, 0, 0, "'GU,J(5,A.", 13, "'", 0, 0, 0, 0, 0, 0, 0, 0, 0, "$$UV1=WUPR@,", 10, "", 10, 10, "J.", 13, "'", 0, 0, 0, 0, 0, 0, 0, 0, 0, "'2XW<,PD""WU>", 10, "S.", 13, "'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'	8XG>U)>SSPIC9"".!('$..", 13, "'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'", 13, 10, "6XXWWVR/", 10, "SS$V", 26, "LW'@U", 26, "I""", 13, "J/", 10, "'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'2SACUUCCSXD!", 13, "2JVR'O!XMU>+U5", 10, "20", 10, "'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'+L>2CSD5=PVA&-<IQF%XC.X.,P(", 26, "0V1", 10, "'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'", 26, "@M92FRA2;OXM9(", 10, ",1221(", 10, "*DW3", 10, "'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'", 10, "(JM92FRD26JWXSI<0(", 26, "", 13, 13, 13, 13, "&.;FRXX6'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "''0OO;3APH63ASXVSQOMLLLMMPRTWGIX;'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'$2OQ@3=LL=29IUVPLLJLMRV<0RLV>$", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'!", 13, ".ISI<9AFC95<FLPSUUTTUUVVXXSD18SR8VD$", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "''!(DWTG<888889;9888888;<=>@@@<8;LXL0=I!", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "''$	#AVVPF=858=FJMOOMLLKKLLOSWS<.DXJ!", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'$""@VXTMG@<;;<=@ADFGGIJJIF<09S>!", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "''", 10, "!=SWUSPMLJIIGFFFFDGRU!", 10, "'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "''", 10, "", 26, "5LVX5'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "''", 10, "+9HSX9", 10, "'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "''", 10, "", 10, "(8ISM,", 13, "'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "''''!", 10, "", 10, ")6CJPSUVVVVUPC-'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'''$", 10, "", 13, "", 26, "", 26, "", 10, 10, "$'", 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, "'''$!$''"
+	db	8 dup 0
+
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 6d9aa7a16db70f3d02ae304b08d4a03011281fef)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 6d9aa7a16db70f3d02ae304b08d4a03011281fef)"
+	ident	"clang version 15.0.0 (https://github.com/jacobly0/llvm-project 6d9aa7a16db70f3d02ae304b08d4a03011281fef)"
+	extern	_random
+	extern	_gfx_FillScreen
+	extern	__sneg
+	extern	__Unwind_SjLj_Register
+	extern	_gfx_Blit
+	extern	__frameset
+	extern	_malloc
+	extern	__iand
+	extern	__Unwind_SjLj_Unregister
+	extern	__iremu
+	extern	_gfx_SetTransparentColor
+	extern	_gfx_Begin
+	extern	_gfx_AllocSprite
+	extern	_gfx_Sprite
+	extern	_gfx_SetPalette
+	extern	_gfx_TransparentSprite_NoClip
+	extern	_gfx_GetSprite
+	extern	_gfx_End
+	extern	_gfx_SetDraw
